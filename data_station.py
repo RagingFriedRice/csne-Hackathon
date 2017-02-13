@@ -1,15 +1,36 @@
 import socket
 import sys
 
-HOST = 'local host'
-PORT = 9999
+HOST = 'localhost'
+PORT_G = 10001
+PORT_B = 10002
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((HOST, PORT))
-s.listen(1)
-conn, addr = s.accept()
+print 'data_station online'
+glove = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+glove.bind((HOST, PORT_G))
+band = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+band.bind((HOST, PORT_B))
 
-while 1:
-#TODO data collection adn sending command back to client
+try:
+	glove.listen(1)
+	conn_glove, addr = glove.accept()
+	print 'glove connection established'
 
-conn.close()
+	band.listen(1)
+	conn_band, addr = band.accept()
+	print 'band connection established'
+
+	data1 = conn_glove.recv(1024)
+	data2 = conn_band.recv(1024)
+
+	cmd = raw_input('shall we start? ')
+
+	conn_glove.sendall('idc')
+	conn_band.sendall('idc')
+
+	#while 1:
+	#TODO collect data from scanner and sending command to client
+finally:
+	conn_glove.close()
+	conn_band.close()
+	print 'data station offline'
